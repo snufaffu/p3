@@ -2,6 +2,8 @@
 
 #include <getopt.h>
 
+#include <vector>
+#include <unordered_map>
 #include <iostream>
 
 #include "Field.h"
@@ -9,11 +11,18 @@ using namespace std;
 
 class Table {
  public:
+  string name;
   int rows;
   int cols;
 };
 
+
+//global variables
 bool quietOutput = false;
+
+
+//
+
 
 void printHelp() {
   cout << "SQL thingy\n";
@@ -51,6 +60,8 @@ int main(int argc, char** argv) {
   cin >> std::boolalpha;            
   cout << std::boolalpha;           
   getOptions(argc, argv);
+  // -----------------
+  
   string command;
   do {
     if (cin.fail()) {
@@ -59,7 +70,40 @@ int main(int argc, char** argv) {
     }
     cout << "% ";
     cin >> command;
+    switch(command[0]) {
+
+      case 'C' :
+      // CREATE, error 1 is here
+
+      case '#' :
+      getline(cin, command);
+      //comments 
+
+      case 'R' :
+      //remove
+
+      case 'I' :
+      //insert
+
+      case 'P' :
+      //print
+
+      case 'D' :
+      //delete
+
+      case 'J' : 
+      //join
+      
+      case 'G' :
+      //generate
+
+      default:
+      cout << "Error: unrecognized command\n";
+    } //Error 4
+
   } while (command != "QUIT");
   cout << "Thanks for being silly!\n";
+
+  
   return 0;
 }
