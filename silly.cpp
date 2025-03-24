@@ -19,7 +19,8 @@ class Table {
 
 //global variables
 bool quietOutput = false;
-
+vector<string> coltypes;
+vector<string> colnames;
 
 //
 
@@ -61,7 +62,11 @@ int main(int argc, char** argv) {
   cout << std::boolalpha;           
   getOptions(argc, argv);
   // -----------------
-  
+  string tableName;
+  uint32_t numCols;
+  string colName;
+  string colType;
+
   string command;
   do {
     if (cin.fail()) {
@@ -73,28 +78,53 @@ int main(int argc, char** argv) {
     switch(command[0]) {
 
       case 'C' :
+        cin >> tableName >> numCols;
+        cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
+        for(size_t i = 0; i < numCols; ++i){
+          cin >> colType;
+          coltypes.push_back(colType);
+        }
+        for(size_t i = 0; i < numCols; ++i){
+          cin >> colName;
+          colnames.push_back(colName);
+        }
+        break;
       // CREATE, error 1 is here
 
       case '#' :
-      getline(cin, command);
+        getline(cin, command);
+        cout << "comment hit\n";
+        break;
       //comments 
 
       case 'R' :
+
+        break;
       //remove
 
       case 'I' :
+
+        break;
       //insert
 
       case 'P' :
+
+        break;
       //print
 
       case 'D' :
+
+        break;
       //delete
 
-      case 'J' : 
+      case 'J' :
+
+        break;
       //join
       
       case 'G' :
+
+        break;
       //generate
 
       default:
