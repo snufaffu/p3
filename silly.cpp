@@ -6,14 +6,22 @@
 #include <unordered_map>
 #include <iostream>
 
+
 #include "Field.h"
 using namespace std;
 
 class Table {
  public:
   string name;
-  int rows;
   int cols;
+
+  Table(string n, int c) : name(n), cols(c) {} 
+
+  private:
+  void generate_table(int columns, string tablename){
+    name = tablename;
+    cols = columns;
+  }
 };
 
 
@@ -21,7 +29,7 @@ class Table {
 bool quietOutput = false;
 vector<string> coltypes;
 vector<string> colnames;
-
+unordered_map<string, Table> tables;
 //
 
 
@@ -88,6 +96,9 @@ int main(int argc, char** argv) {
           cin >> colName;
           colnames.push_back(colName);
         }
+        // for(size_t i = 0; i < numCols; ++i){
+        //   tables.insert({colnames[i]}, coltypes[i]);
+        // }
         break;
       // CREATE, error 1 is here
 
