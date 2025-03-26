@@ -14,22 +14,15 @@ class Table {
  public:
   string name;
   int cols;
-
-  Table(string n, int c) : name(n), cols(c) {} 
-
-  private:
-  void generate_table(int columns, string tablename){
-    name = tablename;
-    cols = columns;
-  }
+  vector<ColumnType> coltypes;
+  unordered_map<string, int> colData;
 };
 
 
 //global variables
 bool quietOutput = false;
-vector<string> coltypes;
-vector<string> colnames;
-unordered_map<string, Table> tables;
+vector<Table> tablesVector;
+unordered_map<string, Table> tablesMap;
 //
 
 
@@ -83,24 +76,57 @@ int main(int argc, char** argv) {
     }
     cout << "% ";
     cin >> command;
+
     switch(command[0]) {
 
-      case 'C' :
+      case 'C' : {
         cin >> tableName >> numCols;
         cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
+        if(tablesMap.count(tableName) > 1){
+          cout << "Error during CREATE: Cannot create already existing table " << tableName << '\n';
+          break;
+        }
+
+        Table newTable;
+        newTable.name = tableName;
+        newTable.cols = numCols;
+
         for(size_t i = 0; i < numCols; ++i){
           cin >> colType;
-          coltypes.push_back(colType);
+          switch (colType[0]) {
+            case 'd' : 
+              newTable.coltypes.push_back(ColumnType::Double);
+            break;
+
+            case 'i' :
+              newTable.coltypes.push_back(ColumnType::Int);
+            break;
+
+            case 'b' :
+              newTable.coltypes.push_back(ColumnType::Bool);
+            break;
+
+            case 's' :
+              newTable.coltypes.push_back(ColumnType::String);
+            break;
+          }
         }
+
         for(size_t i = 0; i < numCols; ++i){
           cin >> colName;
-          colnames.push_back(colName);
+          newTable.colData.insert({colName, i});
         }
+
+        // for(size_t i = 0; i < numCols; ++i){
+        //   cin >> colName;
+        //   colnames.push_back(colName);
+        // }
         // for(size_t i = 0; i < numCols; ++i){
         //   tables.insert({colnames[i]}, coltypes[i]);
         // }
         break;
-      // CREATE, error 1 is here
+      }
+      // CREATE, error 1 is done
 
       case '#' :
         getline(cin, command);
