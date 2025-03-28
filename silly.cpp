@@ -15,14 +15,19 @@ class Table {
   string name;
   int cols;
   vector<ColumnType> coltypes;
-  unordered_map<string, int> colData;
+  unordered_map<string, int> colIndex;
+};
+
+class Database {
+  public: 
+  unordered_map <string, Table> database;
 };
 
 
 //global variables
+Database db;
 bool quietOutput = false;
 vector<Table> tablesVector;
-unordered_map<string, Table> tablesMap;
 //
 
 
@@ -80,9 +85,11 @@ int main(int argc, char** argv) {
     switch(command[0]) {
 
       case 'C' : {
+        cout << "New table ";
         cin >> tableName >> numCols;
-        cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
-        if(tablesMap.count(tableName) > 1){
+        cout << tableName << " with column(s) ";
+        // cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
+        if(db.database.count(tableName) > 1){
           cout << "Error during CREATE: Cannot create already existing table " << tableName << '\n';
           break;
         }
@@ -114,16 +121,11 @@ int main(int argc, char** argv) {
 
         for(size_t i = 0; i < numCols; ++i){
           cin >> colName;
-          newTable.colData.insert({colName, i});
+          newTable.colIndex.insert({colName, i});
+          cout << colName << ' ';
         }
-
-        // for(size_t i = 0; i < numCols; ++i){
-        //   cin >> colName;
-        //   colnames.push_back(colName);
-        // }
-        // for(size_t i = 0; i < numCols; ++i){
-        //   tables.insert({colnames[i]}, coltypes[i]);
-        // }
+        db.database.insert({tableName, newTable});
+        cout << "created\n";
         break;
       }
       // CREATE, error 1 is done
@@ -134,12 +136,25 @@ int main(int argc, char** argv) {
         break;
       //comments 
 
-      case 'R' :
-
+      case 'R' : 
+      cin >> tableName;
+      if(db.database.count(tableName) == 0){
+        cout << "Error during REMOVE: " << tableName << "does not name a table in the database\n";
+      }
+      db.database.erase(tableName);
+      cout << "Table " << tableName << " removed\n";
         break;
-      //remove
+      //REMOVE, error 2 is done
 
       case 'I' :
+        string junk;
+        uint32_t numRows;
+        cin >> junk >> tableName >> numRows >> junk;
+        for(size_t i = 0; i < numRows; ++i){
+          for(size_t j = 0; i < db.database[tableName].cols; ++i){
+            
+          }
+        }
 
         break;
       //insert
@@ -163,6 +178,10 @@ int main(int argc, char** argv) {
 
         break;
       //generate
+
+      case 'Q' :
+        break;
+
 
       default:
       cout << "Error: unrecognized command\n";
