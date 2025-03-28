@@ -16,6 +16,7 @@ class Table {
   int cols;
   vector<ColumnType> coltypes;
   unordered_map<string, int> colIndex;
+  vector<ColumnType> rows;
 };
 
 class Database {
@@ -146,17 +147,46 @@ int main(int argc, char** argv) {
         break;
       //REMOVE, error 2 is done
 
-      case 'I' :
-        string junk;
-        uint32_t numRows;
+      case 'I' :{
+        std::string junk;
+        int numRows;
         cin >> junk >> tableName >> numRows >> junk;
-        for(size_t i = 0; i < numRows; ++i){
-          for(size_t j = 0; i < db.database[tableName].cols; ++i){
+        db.database[tableName].rows.resize(numRows);
+        cin >> junk;
+        db.database[tableName].rows.emplace_back(junk);
+        // for(int i = 0; i < numRows; ++i){
+        //   for(int j = 0; i < db.database[tableName].cols; ++j){
+        //     switch(db.database[tableName].coltypes[j]){
+
+        //       case  ColumnType::Bool : {
+        //         // cin >> junk;
+        //         // db.database[tableName].rows.emplace_back(junk == "true");
+        //       break;
+        //       }
+
+        //       case ColumnType::Double : {
+        //         // cin >> junk;
+        //         // db.database[tableName].rows.emplace_back(stod(junk));
+        //       break;
+        //       }
+
+        //       case ColumnType::String : {
+        //         cin >> junk;
+        //         db.database[tableName].rows.emplace_back(Field(junk));
+        //       break;
+        //       }
+
+        //       case ColumnType::Int : {
+        //         // cin >> junk;
+        //         // db.database[tableName].rows.emplace_back(stoi(junk));
+        //       break;
+        //       }
             
-          }
-        }
+          
 
         break;
+      }
+      
       //insert
 
       case 'P' :
