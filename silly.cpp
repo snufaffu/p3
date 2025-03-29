@@ -5,7 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
-
+#include <queue>
 
 #include "Field.h"
 using namespace std;
@@ -14,9 +14,11 @@ class Table {
  public:
   string name;
   int cols;
+  int numData = 0;
   vector<ColumnType> coltypes;
   unordered_map<string, int> colIndex;
-  vector<ColumnType> rows;
+  vector<Field> rows;
+  int totalRows = 0;
 };
 
 class Database {
@@ -133,7 +135,7 @@ int main(int argc, char** argv) {
 
       case '#' :
         getline(cin, command);
-        cout << "comment hit\n";
+        cerr << "comment hit\n";
         break;
       //comments 
 
@@ -148,39 +150,54 @@ int main(int argc, char** argv) {
       //REMOVE, error 2 is done
 
       case 'I' :{
-        std::string junk;
+        string junk;
         int numRows;
         cin >> junk >> tableName >> numRows >> junk;
-        db.database[tableName].rows.resize(numRows);
-        cin >> junk;
-        db.database[tableName].rows.emplace_back(junk);
-        // for(int i = 0; i < numRows; ++i){
-        //   for(int j = 0; i < db.database[tableName].cols; ++j){
-        //     switch(db.database[tableName].coltypes[j]){
+        cout << "Added " << numRows << " rows to " << tableName <<
+        " from position " << db.database[tableName].totalRows << " to " 
+        << numRows + db.database[tableName].totalRows << "\n";
 
-        //       case  ColumnType::Bool : {
-        //         // cin >> junk;
-        //         // db.database[tableName].rows.emplace_back(junk == "true");
-        //       break;
-        //       }
+        db.database[tableName].totalRows = db.database[tableName].totalRows + numRows;
+        db.database[tableName].rows.reserve(numRows);
+        // cout << db.database[tableName].cols;
+        for(int i = 0; i < numRows; ++i){
+          for(int j = 0; j < db.database[tableName].cols; ++j){
+            switch(db.database[tableName].coltypes[j]){
 
-        //       case ColumnType::Double : {
-        //         // cin >> junk;
-        //         // db.database[tableName].rows.emplace_back(stod(junk));
-        //       break;
-        //       }
+              case  ColumnType::Bool : 
+                cin >> junk;
+                db.database[tableName].rows.emplace_back(junk == "true");
+                ++db.database[tableName].numData;
+                // cout << db.database[tableName].rows.back() << '\n';
+              break;
+              
 
-        //       case ColumnType::String : {
-        //         cin >> junk;
-        //         db.database[tableName].rows.emplace_back(Field(junk));
-        //       break;
-        //       }
+              case ColumnType::Double : 
+                cin >> junk;
+                db.database[tableName].rows.emplace_back(stod(junk));
+                ++db.database[tableName].numData;
+                // cout << db.database[tableName].rows.back() << '\n';
+              break;
+              
 
-        //       case ColumnType::Int : {
-        //         // cin >> junk;
-        //         // db.database[tableName].rows.emplace_back(stoi(junk));
-        //       break;
-        //       }
+              case ColumnType::String : 
+                cin >> junk;
+                db.database[tableName].rows.emplace_back(junk);
+                ++db.database[tableName].numData;
+                // cout << db.database[tableName].rows.back() << '\n';
+              break;
+              
+
+              case ColumnType::Int : 
+                cin >> junk;
+                db.database[tableName].rows.emplace_back(stoi(junk));
+                ++db.database[tableName].numData;
+                // cout << db.database[tableName].rows.back() << '\n';
+              break;
+              
+            }
+          }
+        }
             
           
 
@@ -189,9 +206,45 @@ int main(int argc, char** argv) {
       
       //insert
 
-      case 'P' :
+      case 'P' : {
+        int N;
+        int index = 0;
+        string junk;
+        queue<string> printNames;
+        queue<int> indexList;
+        string name;
+
+        cin >> junk >> tableName >> N;
+        for(int i = 0; i < N; ++i){
+          cin >> junk;
+          printNames.push(junk);
+        }
+
+        cin >> junk;
+
+        if(junk[0] == 'W'){
+          break;
+        } // not this far yet
+
+        if(junk[0] == 'A'){
+          for(int i = 0; i < N; ++i){
+            name = printNames.front();
+            indexList.push(db.database[tableName].colIndex[name]);
+            printNames.pop();
+          }
+
+          while(index < db.database[tableName].numData){
+            cout << "print\n";
+            index = index + db.database[tableName].cols; 
+          }
+        
+        
+         
+          
+        } //print all
 
         break;
+      }
       //print
 
       case 'D' :
