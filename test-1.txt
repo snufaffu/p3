@@ -1,0 +1,30 @@
+#test1
+CREATE newtable 1 double price
+INSERT INTO newtable 1 ROWS
+310.50
+#comment
+INSERT INTO newtable 2 ROWS
+15
+15.10
+CREATE people 2 string bool name happy
+INSERT INTO people 3 ROWS
+james true 
+dan true
+tom false
+#comment
+PRINT FROM people 1 happy ALL
+CREATE people 1 int number
+PRINT FROM people 1 happy ALL
+DELETE FROM people WHERE happy = false
+PRINT FROM people 1 happy ALL
+CREATE removeTable 3 string string string test1 test2 test3
+PRINT FROM removeTable 3 test1 test2 test3 ALL
+INSERT INTO removeTable 2 ROWS
+testing testing testing
+testing testing testing
+PRINT FROM removeTable 3 test1 test2 test3 ALL
+PRINT FROM removeTable 2 test1 test3 ALL
+REMOVE removeTable
+PRINT FROM removeTable 1 test1
+INSERT INTO removeTable 1 ROWS
+QUIT

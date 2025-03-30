@@ -39,6 +39,13 @@ bool doesTableExist(string tableName){
   return true;
 }
 
+bool doesColExist(string tableName, string columnName){
+  if(db.database[tableName].colIndex.count(columnName) == 0){
+    return false;
+  }
+  return true;
+}
+
 
 void deleteHelp(char op){
   switch(op) {
@@ -301,10 +308,11 @@ int main(int argc, char** argv) {
       case 'D' : {
         string junk;
         string inputname;
-        string op;
+        char op;
         string val;
+        int index;
       
-        cin >> junk >> tableName >> junk >> inputname >> op >> val;
+        cin >> junk >> tableName >> junk >> inputname >> op;
 
 
         if(doesTableExist(tableName) == false){
@@ -312,7 +320,42 @@ int main(int argc, char** argv) {
           break;
         } // error checking
         
+        index = db.database[tableName].colIndex[inputname];
 
+        switch(db.database[tableName].coltypes[index]){
+          case ColumnType::String : {
+            cin >> val;
+            cout << "string\n";
+          break;
+        }
+
+
+          case ColumnType::Double : {
+            cin >> val;
+            cout << "double\n";
+          break;
+          }
+
+          case ColumnType::Int : {
+            cin >> val;
+            cout << "int\n";
+          break;
+          }
+
+          case ColumnType::Bool : {
+            cin >> val;
+            bool boolVal = (val == "true");
+            cout << boolVal << '\n';
+          break;
+          }
+
+        }
+
+        switch(op) {
+          case '=' :
+          
+
+        }
 
         break;
       }

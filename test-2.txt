@@ -1,0 +1,17 @@
+#test2
+CREATE maple 3 string string int username job order
+PRINT FROM maple 2 username job ALL
+INSERT INTO maple 2 ROWS
+maynaise nw 1
+taulst hy 2
+PRINT FROM maple 3 username job order ALL
+CREATE school 2 string int name id
+INSERT INTO school 3 ROWS
+hong 30
+alex 25
+kim 20
+daniel 15
+PRINT FROM school 1 job ALL
+CREATE school 1 bool happy
+HAPPY Check
+QUIT
