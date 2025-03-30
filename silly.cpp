@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <iostream>
 #include <queue>
-
 #include "Field.h"
+
 using namespace std;
 
 class Table {
@@ -30,8 +30,32 @@ class Database {
 //global variables
 Database db;
 bool quietOutput = false;
-vector<Table> tablesVector;
 //
+
+bool doesTableExist(string tableName){
+  if(db.database.count(tableName) == 0){
+    return false;
+  }
+  return true;
+}
+
+
+void deleteHelp(char op){
+  switch(op) {
+    case '<' :
+      cout << "less\n";
+      break;
+    
+    case '=' :
+      cout << "equal\n";
+      break;
+
+    case '>' :
+    cout << "more\n";
+    break;
+  }
+  cout << "helping!\n";
+}
 
 
 void printHelp() {
@@ -66,6 +90,7 @@ void getOptions(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+  
   ios_base::sync_with_stdio(false); 
   cin >> std::boolalpha;            
   cout << std::boolalpha;           
@@ -88,14 +113,15 @@ int main(int argc, char** argv) {
     switch(command[0]) {
 
       case 'C' : {
-        cout << "New table ";
         cin >> tableName >> numCols;
-        cout << tableName << " with column(s) ";
-        // cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
-        if(db.database.count(tableName) > 1){
+        if(db.database.count(tableName) == 1){
           cout << "Error during CREATE: Cannot create already existing table " << tableName << '\n';
+          getline(cin, command);
           break;
         }
+        cout << "New table ";
+        cout << tableName << " with column(s) ";
+        // cout << "table name: " << tableName << " number of columns: " << numCols << '\n';
 
         Table newTable;
         newTable.name = tableName;
@@ -141,8 +167,14 @@ int main(int argc, char** argv) {
 
       case 'R' : 
       cin >> tableName;
+
+      if(doesTableExist(tableName) == false){
+        cout << "Error during REMOVE: " << tableName << " does not name a table in the database\n";
+        break;
+      } // error checking
+
       if(db.database.count(tableName) == 0){
-        cout << "Error during REMOVE: " << tableName << "does not name a table in the database\n";
+        cout << "Error during REMOVE: " << tableName << " does not name a table in the database\n";
       }
       db.database.erase(tableName);
       cout << "Table " << tableName << " removed\n";
@@ -153,9 +185,16 @@ int main(int argc, char** argv) {
         string junk;
         int numRows;
         cin >> junk >> tableName >> numRows >> junk;
+
+        if(doesTableExist(tableName) == false){
+          cout << "Error during INSERT: " << tableName << " does not name a table in the database\n";
+          break;
+        } // error checking
+
+
         cout << "Added " << numRows << " rows to " << tableName <<
         " from position " << db.database[tableName].totalRows << " to " 
-        << numRows + db.database[tableName].totalRows << "\n";
+        << numRows + db.database[tableName].totalRows - 1 << "\n";
 
         db.database[tableName].totalRows = db.database[tableName].totalRows + numRows;
         db.database[tableName].rows.reserve(numRows);
@@ -208,13 +247,19 @@ int main(int argc, char** argv) {
 
       case 'P' : {
         int N;
-        int index = 0;
+        int index;
         string junk;
         queue<string> printNames;
-        queue<int> indexList;
+        vector<int> indexList;
         string name;
 
         cin >> junk >> tableName >> N;
+        if(doesTableExist(tableName) == false){
+          cout << "Error during PRINT: " << tableName << " does not name a table in the database\n";
+          getline(cin, command);
+          break;
+        } 
+        //error checking
         for(int i = 0; i < N; ++i){
           cin >> junk;
           printNames.push(junk);
@@ -223,33 +268,54 @@ int main(int argc, char** argv) {
         cin >> junk;
 
         if(junk[0] == 'W'){
+          cout << "come back later";
           break;
         } // not this far yet
 
         if(junk[0] == 'A'){
           for(int i = 0; i < N; ++i){
             name = printNames.front();
-            indexList.push(db.database[tableName].colIndex[name]);
+            cout << printNames.front() << ' ';
+            indexList.push_back(db.database[tableName].colIndex[name]);
             printNames.pop();
           }
-
-          while(index < db.database[tableName].numData){
-            cout << "print\n";
-            index = index + db.database[tableName].cols; 
-          }
-        
-        
-         
           
+          cout << '\n';
+            for(int i = 0; i < db.database[tableName].totalRows; ++i){
+              for(int j = 0; j < N; ++j){
+                index = indexList[j];
+                  cout << db.database[tableName].rows[i*db.database[tableName].cols+index];
+                  cout << ' ';
+              }
+              cout << '\n';
+        }
+          
+        cout << "Printed " << db.database[tableName].totalRows << " matching rows from " << tableName << '\n';
+
         } //print all
 
         break;
       }
       //print
 
-      case 'D' :
+      case 'D' : {
+        string junk;
+        string inputname;
+        string op;
+        string val;
+      
+        cin >> junk >> tableName >> junk >> inputname >> op >> val;
+
+
+        if(doesTableExist(tableName) == false){
+          cout << "Error during INSERT: " << tableName << " does not name a table in the database\n";
+          break;
+        } // error checking
+        
+
 
         break;
+      }
       //delete
 
       case 'J' :
