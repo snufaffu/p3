@@ -7,6 +7,8 @@
 #include <iostream>
 #include <queue>
 #include "Field.h"
+#include <algorithm>
+
 
 using namespace std;
 
@@ -26,6 +28,23 @@ class Database {
   unordered_map <string, Table> database;
 };
 
+struct lessThan {
+  bool operator()(ColumnType a, ColumnType b){
+    return a < b;
+  }
+};
+
+struct Equal {
+  bool operator()(ColumnType a, ColumnType b){
+    return a == b;
+  }
+};
+
+struct greaterThan {
+  bool operator()(ColumnType a, ColumnType b){
+    return a > b;
+  }
+};
 
 //global variables
 Database db;
@@ -277,7 +296,7 @@ int main(int argc, char** argv) {
         if(junk[0] == 'W'){
           cout << "come back later";
           break;
-        } // not this far yet
+        } // print where
 
         if(junk[0] == 'A'){
           for(int i = 0; i < N; ++i){
@@ -306,17 +325,19 @@ int main(int argc, char** argv) {
       //print
 
       case 'D' : {
+        vector<Field> testData;
         string junk;
         string inputname;
         char op;
         string val;
         int index;
+        // testData.reserve(1);
       
         cin >> junk >> tableName >> junk >> inputname >> op;
 
 
         if(doesTableExist(tableName) == false){
-          cout << "Error during INSERT: " << tableName << " does not name a table in the database\n";
+          cout << "Error during DELETE: " << tableName << " does not name a table in the database\n";
           break;
         } // error checking
         
@@ -325,7 +346,7 @@ int main(int argc, char** argv) {
         switch(db.database[tableName].coltypes[index]){
           case ColumnType::String : {
             cin >> val;
-            cout << "string\n";
+            testData.emplace_back(val);
           break;
         }
 
@@ -333,19 +354,19 @@ int main(int argc, char** argv) {
           case ColumnType::Double : {
             cin >> val;
             cout << "double\n";
+            testData.emplace_back(stod(val));
           break;
           }
 
           case ColumnType::Int : {
             cin >> val;
-            cout << "int\n";
+            testData.emplace_back(stoi(val));
           break;
           }
 
           case ColumnType::Bool : {
             cin >> val;
-            bool boolVal = (val == "true");
-            cout << boolVal << '\n';
+            testData.emplace_back(val == "true");
           break;
           }
 
@@ -353,6 +374,12 @@ int main(int argc, char** argv) {
 
         switch(op) {
           case '=' :
+  
+          for(int i = 0; i < db.database[tableName].totalRows; ++i){
+            if(db.database[tableName].rows[i*db.database[tableName].cols+index] == testData[0]){
+              
+            }
+          }
           
 
         }
