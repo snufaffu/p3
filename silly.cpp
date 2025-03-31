@@ -28,39 +28,53 @@ class Database {
 };
 
 
-class lessThan {
-  bool operator()(const vector<Field> & vec, Field val) const {
-    for (auto& v : vec) {
-      if(v < val){
-        return true;
-      }
-    }
-    return false;
-  }
-};
+// class lessThan {
+//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
+//     for (auto& v : vec) {
+//       if(v < val){
+//         return true;
+//       }
+//     }
+//     return false;
+//   }
+// };
 
 
-class equalTo {
-  bool operator()(const vector<Field> & vec, Field val) const {
-    for (auto& v : vec) {
-      if(v == val){
-        return true;
-      }
-    }
-    return false;
-  }
-};
+// class equalTo {
+//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
+//     for (auto& v : vec) {
+//       if(v == val){
+//         return true;
+//       }
+//     }
+//     return false;
+//   }
+// };
 
-class greaterThan {
-  bool operator()(const vector<Field> & vec, Field val) const {
-    for (auto& v : vec) {
-      if(v > val){
-        return true;
-      }
-    }
-    return false;
-  }
-};
+
+
+// class equalTo {
+//   Field m_val;
+// public:
+//   explicit equalTo(Field val) : m_val(val) {}
+  
+//   bool operator()(const vector<Field>& row) const {
+//       return any_of(row.begin(), row.end(),
+//           [this](const Field& f) { return f == m_val; });
+//   }
+// };
+
+
+// class greaterThan {
+//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
+//     for (auto& v : vec) {
+//       if(v > val){
+//         return true;
+//       }
+//     }
+//     return false;
+//   }
+// };
 
 
 //global variables
@@ -356,6 +370,7 @@ int main(int argc, char** argv) {
         char op;
         string val;
         int index;
+
       
         cin >> junk >> tableName >> junk >> inputname >> op;
 
@@ -370,27 +385,27 @@ int main(int argc, char** argv) {
         switch(db.database[tableName].coltypes[index]){
           case ColumnType::String : {
             cin >> val;
-            cout << "string\n";
+            cerr << "string\n";
           break;
         }
 
 
           case ColumnType::Double : {
             cin >> val;
-            cout << "double\n";
+            cerr << "double\n";
           break;
           }
 
           case ColumnType::Int : {
             cin >> val;
-            cout << "int\n";
+            cerr << "int\n";
           break;
           }
 
           case ColumnType::Bool : {
             cin >> val;
             bool boolVal = (val == "true");
-            cout << boolVal << '\n';
+            cerr << boolVal << '\n';
           break;
           }
 
@@ -398,17 +413,54 @@ int main(int argc, char** argv) {
 
         switch(op) {
           case '=' :
-          // db.database[tableName].rows.erase(remove_if(db.database[tableName].rows.begin(), db.database[tableName].rows.end(), equalTo(db.database[tableName].rows, val)));
+
+          // auto& rows = db.database[tableName].rows;
+          // rows.erase(remove_if(rows.begin(), rows.end(), equalTo(rows.back(), val)), rows.end());  
+          // db.database[tableName].rows.erase(remove_if(db.database[tableName].rows.begin(), db.database[tableName].rows.end(),
+          //  equalTo(db.database[tableName].rows, val)));
           break;
         }
 
         break;
       }
-      //delete
+      //delete WTF
       
-      case 'J' :
-        cout << "joining\n";
+      case 'J' : {
+        string junk;
+        string tablename1;
+        string tablename2;
+        string colname1;
+        string colname2;
+        int N;
+        int tableIndex;
+        vector<string> columnCheck;
+        vector<int> tableCheck;
+        char op;
+
+
+        cin >> tablename1 >> junk >> tablename2 >> junk >> colname1 >> op >> colname2
+        >> junk >> junk >> N;
+
+        for(int i = 0; i < N; ++i){
+          cin >> junk >> tableIndex;
+          columnCheck.push_back(junk);
+          tableCheck.push_back(tableIndex);
+        }
+        
+        auto& rows = db.database[tablename1].rows;
+        int index = db.database[tablename1].colIndex[colname1];
+        auto& rows2 = db.database[tablename2].rows;
+        int index2 = db.database[tablename2].colIndex[colname2];
+        for(size_t i = 0; i < min(rows.size(), rows2.size()); ++i){
+          if(rows[i][index] == rows2[i][index2]){
+            cout << "hit\n";
+          }
+
+        } 
+
+
         break;
+      }
       //join
       
       case 'G' :
