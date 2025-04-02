@@ -16,7 +16,6 @@ class Table {
  public:
   string name;
   int cols;
-  int numData = 0;
   vector<ColumnType> coltypes;
   unordered_map<string, int> colIndex;
   vector<vector<Field>> rows;
@@ -101,6 +100,175 @@ void deleteHelp(char op, string tablename, string colname, Field compdata){
       break;
     case '>' :
       rows.erase(remove_if(rows.begin(),rows.end(), greaterThan(compdata, checking)),rows.end());
+    break;
+  }
+}
+
+void printWhereB(char op, string tableName, Field compdata, size_t N, map<Field, vector<int>> h, vector<int> rowvec, 
+  vector<int> colvec){
+  int numHits = 0;
+  auto &rows = db.database[tableName].rows;
+  switch(op) {
+    case '=' :
+    for(auto & hash : h){
+      if (hash.first == compdata){
+        ++numHits;
+        rowvec = hash.second;
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]] << ' ';
+      }
+      cout << '\n';
+    }
+    cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
+    break;
+
+    case '<' :
+    for(auto & hash : h){
+      if (hash.first < compdata){
+        ++numHits;
+        rowvec.insert(rowvec.end(), hash.second.begin(), hash.second.end());
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]];
+      }
+    }
+    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    break;
+
+    case '>' :
+    for(auto & hash : h){
+      if (hash.first > compdata){
+        ++numHits;
+        rowvec.insert(rowvec.end(), hash.second.begin(), hash.second.end());
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]];
+      }
+    }
+    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    break;
+
+  }
+}
+
+void printWhereH(char op, string tableName, Field compdata, size_t N, unordered_map<Field, vector<int>> h, vector<int> rowvec, 
+  vector<int> colvec){
+  int numHits = 0;
+  auto &rows = db.database[tableName].rows;
+  switch(op) {
+    case '=' :
+    for(auto & hash : h){
+      if (hash.first == compdata){
+        ++numHits;
+        rowvec = hash.second;
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]] << ' ';
+      }
+      cout << '\n';
+    }
+    cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
+    break;
+
+    case '<' :
+    for(auto & hash : h){
+      if (hash.first < compdata){
+        ++numHits;
+        rowvec.insert(rowvec.end(), hash.second.begin(), hash.second.end());
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]];
+      }
+    }
+    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    break;
+
+    case '>' :
+    for(auto & hash : h){
+      if (hash.first > compdata){
+        ++numHits;
+        rowvec.insert(rowvec.end(), hash.second.begin(), hash.second.end());
+      }
+    }
+    for(size_t i = 0; i < rowvec.size(); ++i){
+      for(size_t j = 0; j < N; ++j){
+        cout << rows[rowvec[i]][colvec[j]];
+      }
+    }
+    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    break;
+
+  }
+}
+
+void printWhere(char op, string tableName, Field compdata, size_t colIndex, size_t N, vector<int> ind){
+
+  int numHits = 0;
+  auto &rows = db.database[tableName].rows;
+  switch(op) {
+    case '<' :
+      for(int i = 0; i < db.database[tableName].totalRows; ++i){
+        if(rows[i][colIndex] < compdata){
+          ++numHits;
+          for(size_t j = 0; j < N; ++j){
+            cout << rows[i][ind[j]];
+          }
+          cout << '\n';
+        }
+      }
+    if(numHits == 0){
+    cout << "Printed 0 matching rows from " << tableName << '\n';
+    } else{
+      cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
+    }
+
+    break;
+
+    case '=' :
+    for(int i = 0; i < db.database[tableName].totalRows; ++i){
+      if(rows[i][colIndex] == compdata){
+        ++numHits;
+        for(size_t j = 0; j < N; ++j){
+          cout << rows[i][ind[j]] << ' ';
+        }
+        cout << '\n';
+      }
+    }
+    if(numHits == 0){
+      cout << "Printed 0 matching rows from " << tableName << '\n';
+      } else{
+        cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
+      }
+
+    break;
+
+    case '>' :
+    for(int i = 0; i < db.database[tableName].totalRows; ++i){
+      if(rows[i][colIndex] > compdata){
+        ++numHits;
+        for(size_t j = 0; j < N; ++i){
+          cout << rows[i][ind[j]] << ' ';
+        }
+        cout << '\n';
+      }
+    }
+    if(numHits == 0){
+      cout << "Printed 0 matching rows from " << tableName << '\n';
+      } else{
+        cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
+      }
+
     break;
   }
 }
@@ -245,7 +413,7 @@ int main(int argc, char** argv) {
         " from position " << db.database[tableName].totalRows << " to " 
         << numRows + db.database[tableName].totalRows - 1 << "\n";
 
-        
+        int beginningRows = db.database[tableName].totalRows;
 
         db.database[tableName].totalRows = db.database[tableName].totalRows + numRows;
 
@@ -253,7 +421,7 @@ int main(int argc, char** argv) {
 
 
         // cout << db.database[tableName].cols;
-        for(int i = 0; i < numRows; ++i){
+        for(int i = beginningRows; i < numRows + beginningRows; ++i){
           db.database[tableName].rows.emplace_back();
           db.database[tableName].rows.back().reserve(db.database[tableName].cols);
           for(int j = 0; j < db.database[tableName].cols; ++j){
@@ -264,7 +432,6 @@ int main(int argc, char** argv) {
               case  ColumnType::Bool : 
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(junk == "true");
-                ++db.database[tableName].numData;
                 // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
@@ -272,7 +439,6 @@ int main(int argc, char** argv) {
               case ColumnType::Double : 
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(stod(junk));
-                ++db.database[tableName].numData;
                 // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
@@ -280,7 +446,6 @@ int main(int argc, char** argv) {
               case ColumnType::String : 
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(junk);
-                ++db.database[tableName].numData;
                 // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
@@ -288,7 +453,6 @@ int main(int argc, char** argv) {
               case ColumnType::Int : 
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(stoi(junk));
-                ++db.database[tableName].numData;
                 // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
@@ -310,7 +474,10 @@ int main(int argc, char** argv) {
         queue<string> printNames;
         vector<string> printNamesVec;
         vector<int> indexList;
+        vector<Field> copyVec;
         string name;
+        char op;
+        string whereCol;
 
 
         cin >> junk >> tableName >> N;
@@ -333,12 +500,144 @@ int main(int argc, char** argv) {
         }
         
         if(EXITNOW) break;
+        // 
         cin >> junk;
 
         if(junk[0] == 'W'){
-          cout << "come back later";
+          cin >> whereCol >> op;
+          int test = db.database[tableName].colIndex[whereCol];
+          vector<int> R;
+          if((db.database[tableName].indexType == 'h' || db.database[tableName].indexType == 'b') && test == db.database[tableName].generateIndex){
+
+            if(db.database[tableName].indexType == 'h'){
+            for(int i = 0; i < N; ++i){
+              cout << printNames.front() << ' ';
+              indexList.push_back(db.database[tableName].colIndex[printNames.front()]);
+              printNames.pop();
+            }
+
+            cout << '\n';
+
+            switch(db.database[tableName].coltypes[test]) {
+              case ColumnType::Bool : {
+                cin >> junk;
+                Field temp(junk == "true");
+                printWhereH(op, tableName, temp, N, db.database[tableName].h, R, indexList);
+              break;
+              }
+  
+              case ColumnType::Double : {
+                cin >> junk;
+                double val = stod(junk);
+                Field temp(val);
+                printWhereH(op, tableName, temp, N, db.database[tableName].h, R, indexList);
+              break;
+              }
+  
+              case ColumnType::Int : {
+                cin >> junk;
+                int val = stoi(junk);
+                Field temp(val);
+                printWhereH(op, tableName, temp, N, db.database[tableName].h, R, indexList);
+              break;
+              }
+              
+              case ColumnType::String : 
+                cin >> junk;
+                Field temp(junk);
+                printWhereH(op, tableName, temp, N, db.database[tableName].h, R, indexList);
+              break;
+            }
+            }
+            if(db.database[tableName].indexType == 'b'){
+              //bst
+              for(int i = 0; i < N; ++i){
+                cout << printNames.front() << ' ';
+                indexList.push_back(db.database[tableName].colIndex[printNames.front()]);
+                printNames.pop();
+              }
+              cout << '\n';
+
+              switch(db.database[tableName].coltypes[test]) {
+                case ColumnType::Bool : {
+                  cin >> junk;
+                  Field temp(junk == "true");
+                  printWhereB(op, tableName, temp, N, db.database[tableName].b, R, indexList);
+                break;
+                }
+    
+                case ColumnType::Double : {
+                  cin >> junk;
+                  double val = stod(junk);
+                  Field temp(val);
+                  printWhereB(op, tableName, temp, N, db.database[tableName].b, R, indexList);
+                break;
+                }
+    
+                case ColumnType::Int : {
+                  cin >> junk;
+                  int val = stoi(junk);
+                  Field temp(val);
+                  printWhereB(op, tableName, temp, N, db.database[tableName].b, R, indexList);
+                break;
+                }
+                
+                case ColumnType::String : 
+                  cin >> junk;
+                  Field temp(junk);
+                  printWhereB(op, tableName, temp, N, db.database[tableName].b, R, indexList);
+                break;
+              }
+            }
+          }
+          
+
+          if(db.database[tableName].indexType == 'n' || db.database[tableName].indexType == 'h' || db.database[tableName].indexType == 'b'){ 
+            int test = db.database[tableName].colIndex[whereCol];
+            for(int i = 0; i < N; ++i){
+              cout << printNames.front() << ' ';
+              indexList.push_back(db.database[tableName].colIndex[printNames.front()]);
+              printNames.pop();
+            }
+            
+            cout << '\n';
+
+            switch(db.database[tableName].coltypes[test]) {
+              case ColumnType::Bool : {
+                cin >> junk;
+                Field temp(junk == "true");
+                printWhere(op, tableName, temp, test, N, indexList);
+              break;
+              }
+  
+              case ColumnType::Double : {
+                cin >> junk;
+                double val = stod(junk);
+                Field temp(val);
+                printWhere(op, tableName, temp, test, N, indexList);
+              break;
+              }
+  
+              case ColumnType::Int : {
+                cin >> junk;
+                int val = stoi(junk);
+                Field temp(val);
+                printWhere(op, tableName, temp, test, N, indexList);
+              break;
+              }
+              
+              case ColumnType::String : 
+                cin >> junk;
+                Field temp(junk);
+                printWhere(op, tableName, temp, test, N, indexList);
+            }
+          }
+
+
+
+
           break;
-        } // not this far yet
+        } // PRINT WHERE
 
         if(junk[0] == 'A'){
           for(int i = 0; i < N; ++i){
@@ -348,9 +647,7 @@ int main(int argc, char** argv) {
             printNames.pop();
           }
           
-          if(EXITNOW){
-            break;
-          }
+          
           cout << '\n';
             for(int i = 0; i < db.database[tableName].totalRows; ++i){
               for(int j = 0; j < N; ++j){
@@ -409,7 +706,7 @@ int main(int argc, char** argv) {
             cin >> val;
             double input = stod(val);
             Field deleteInput(input);
-            cerr << "double\n";
+            // cerr << "double\n";
             deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
@@ -418,7 +715,7 @@ int main(int argc, char** argv) {
             cin >> val;
             int input = stoi(val);
             Field deleteInput(input);
-            cerr << "int\n";
+            // cerr << "int\n";
             deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
@@ -426,7 +723,7 @@ int main(int argc, char** argv) {
           case ColumnType::Bool : {
             cin >> val;
             Field deleteInput(val == "true");
-            cerr << "bool\n";
+            // cerr << "bool\n";
             deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
@@ -439,50 +736,48 @@ int main(int argc, char** argv) {
     
       //delete, error checking done
       
-      // case 'J' : {
-      //   string junk;
-      //   string tablename1;
-      //   string tablename2;
-      //   string colname1;
-      //   string colname2;
-      //   int N;
-      //   int tableIndex;
-      //   vector<string> columnCheck;
-      //   vector<int> tableCheck;
-      //   char op;
+      case 'J' : {
+        string junk;
+        cout << "join\n";
+        getline(cin, junk);
+        // string tablename1;
+        // string tablename2;
+        // string colname1;
+        // string colname2;
+        // int N;
+        // int tableIndex;
+        // vector<string> columnCheck;
+        // vector<int> tableCheck;
+        // char op;
 
+        // cin >> tablename1 >> junk >> tablename2 >> junk >> colname1 >> op >> colname2
+        // >> junk >> junk >> N;
 
-      //   cin >> tablename1 >> junk >> tablename2 >> junk >> colname1 >> op >> colname2
-      //   >> junk >> junk >> N;
-
-      //   for(int i = 0; i < N; ++i){
-      //     cin >> junk >> tableIndex;
-      //     columnCheck.push_back(junk);
-      //     tableCheck.push_back(tableIndex);
-      //   }
+        // for(int i = 0; i < N; ++i){
+        //   cin >> junk >> tableIndex;
+        //   columnCheck.push_back(junk);
+        //   tableCheck.push_back(tableIndex);
+        // }
         
-      //   auto& rows = db.database[tablename1].rows;
-      //   int index = db.database[tablename1].colIndex[colname1];
-      //   auto& rows2 = db.database[tablename2].rows;
-      //   int index2 = db.database[tablename2].colIndex[colname2];
-      //   for(size_t i = 0; i < min(rows.size(), rows2.size()); ++i){
-      //     if(rows[i][index] == rows2[i][index2]){
-      //       cout << "hit\n";
-      //     }
-      //   } 
+        // auto& rows = db.database[tablename1].rows;
+        // int index = db.database[tablename1].colIndex[colname1];
+        // auto& rows2 = db.database[tablename2].rows;
+        // int index2 = db.database[tablename2].colIndex[colname2];
+        // for(size_t i = 0; i < min(rows.size(), rows2.size()); ++i){
+        //   if(rows[i][index] == rows2[i][index2]){
+        //     cout << "hit\n";
+        //   }
+        // } 
 
 
-      //   break;
-      // }
-      // //join
+        break;
+      }
+      //join
       
       case 'G' :{
         string junk;
         string indexType;
         cin >> junk >> tableName >> indexType >> junk >> junk >> colName;
-        int columnIndex = db.database[tableName].colIndex[colName];
-        size_t numKeys;
-
         if(doesTableExist(tableName) == false) {
           cout << "Error during GENERATE: " << tableName << " does not name a table in the database\n";
           break;
@@ -490,7 +785,12 @@ int main(int argc, char** argv) {
 
         if (doesColExist(tableName, colName) == false) {
           cout << "Error during GENERATE: " << colName << " does not name a column in " << tableName << '\n';
+          break;
         }
+
+        int columnIndex = db.database[tableName].colIndex[colName];
+        size_t numKeys;
+        db.database[tableName].generateIndex = columnIndex;
 
         db.database[tableName].h.clear();
         db.database[tableName].b.clear();
@@ -498,7 +798,7 @@ int main(int argc, char** argv) {
         if(indexType[0] == 'h'){
           db.database[tableName].indexType = 'h';
           for(int i = 0; i < db.database[tableName].totalRows; ++i){
-            db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(columnIndex);
+            db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(i);
           }
           numKeys = db.database[tableName].h.size();
         }
@@ -506,7 +806,7 @@ int main(int argc, char** argv) {
         if(indexType[0] == 'b'){
           db.database[tableName].indexType = 'b';
           for(int i = 0; i < db.database[tableName].totalRows; ++i){
-            db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(columnIndex);
+            db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(i);
           }
           numKeys = db.database[tableName].b.size();
         }
@@ -515,7 +815,7 @@ int main(int argc, char** argv) {
 
       break;
       }
-      //generate
+      //generate done
 
       case 'Q' :
         break;
