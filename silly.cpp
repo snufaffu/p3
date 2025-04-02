@@ -24,6 +24,10 @@ class Table {
   int generateIndex;
   map<Field, vector<int>> b;
   unordered_map<Field, vector<int>> h;
+  bool hasGen = false;
+  string nameGenerated;
+  size_t numKeys;
+
 };
 
 class Database {
@@ -86,6 +90,37 @@ class greaterThan{
   }
 };
 
+void generate(string tableName, string colname, char indextype){
+
+        db.database[tableName].hasGen = true;
+        int columnIndex = db.database[tableName].colIndex[colname];
+        size_t numkeys;
+        db.database[tableName].generateIndex = columnIndex;
+        string outType;
+
+        db.database[tableName].h.clear();
+        db.database[tableName].b.clear();
+
+        if(indextype == 'h'){
+          outType = "hash";
+          db.database[tableName].indexType = 'h';
+          for(int i = 0; i < db.database[tableName].totalRows; ++i){
+            db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(i);
+          }
+          numkeys = db.database[tableName].h.size();
+        }
+
+        if(indextype == 'b'){
+          outType = "bst";
+          db.database[tableName].indexType = 'b';
+          for(int i = 0; i < db.database[tableName].totalRows; ++i){
+            db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(i);
+          }
+          numkeys = db.database[tableName].b.size();
+        }
+        db.database[tableName].numKeys = numkeys;
+        
+}
 
 void deleteHelp(char op, string tablename, string colname, Field compdata){
   auto &rows = db.database[tablename].rows;
@@ -137,7 +172,7 @@ void printWhereB(char op, string tableName, Field compdata, size_t N, map<Field,
         cout << rows[rowvec[i]][colvec[j]];
       }
     }
-    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    cout << '\n' << "Printed " << numHits << " matching rows from " << tableName << '\n';
     break;
 
     case '>' :
@@ -152,7 +187,7 @@ void printWhereB(char op, string tableName, Field compdata, size_t N, map<Field,
         cout << rows[rowvec[i]][colvec[j]];
       }
     }
-    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    cout << '\n' << "Printed " << numHits << " matching rows from " << tableName << '\n';
     break;
 
   }
@@ -188,10 +223,11 @@ void printWhereH(char op, string tableName, Field compdata, size_t N, unordered_
     }
     for(size_t i = 0; i < rowvec.size(); ++i){
       for(size_t j = 0; j < N; ++j){
-        cout << rows[rowvec[i]][colvec[j]];
+        cout << rows[rowvec[i]][colvec[j]] << ' ';
       }
+      cout << '\n';
     }
-    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
     break;
 
     case '>' :
@@ -203,10 +239,11 @@ void printWhereH(char op, string tableName, Field compdata, size_t N, unordered_
     }
     for(size_t i = 0; i < rowvec.size(); ++i){
       for(size_t j = 0; j < N; ++j){
-        cout << rows[rowvec[i]][colvec[j]];
+        cout << rows[rowvec[i]][colvec[j]] << ' ';
       }
+      cout << '\n';
     }
-    cout << '\n' << "Printed " << numHits << "matching rows from " << tableName << '\n';
+    cout << "Printed " << numHits << " matching rows from " << tableName << '\n';
     break;
 
   }
@@ -316,7 +353,6 @@ int main(int argc, char** argv) {
   uint32_t numCols;
   string colName;
   string colType;
-
   string command;
   do {
     EXITNOW = false;
@@ -459,8 +495,11 @@ int main(int argc, char** argv) {
             }
           }
         }
+        
             
-          
+        if(db.database[tableName].indexType == 'b' || db.database[tableName].indexType == 'h'){
+          generate(tableName, db.database[tableName].nameGenerated, db.database[tableName].indexType);
+        }
 
         break;
       }
@@ -468,6 +507,7 @@ int main(int argc, char** argv) {
       //insert
 
       case 'P' : {
+        bool flag = false;
         int N;
         int index;
         string junk;
@@ -510,6 +550,7 @@ int main(int argc, char** argv) {
           if((db.database[tableName].indexType == 'h' || db.database[tableName].indexType == 'b') && test == db.database[tableName].generateIndex){
 
             if(db.database[tableName].indexType == 'h'){
+            flag = true;
             for(int i = 0; i < N; ++i){
               cout << printNames.front() << ' ';
               indexList.push_back(db.database[tableName].colIndex[printNames.front()]);
@@ -551,6 +592,7 @@ int main(int argc, char** argv) {
             }
             if(db.database[tableName].indexType == 'b'){
               //bst
+              flag = true;
               for(int i = 0; i < N; ++i){
                 cout << printNames.front() << ' ';
                 indexList.push_back(db.database[tableName].colIndex[printNames.front()]);
@@ -592,7 +634,7 @@ int main(int argc, char** argv) {
           }
           
 
-          if(db.database[tableName].indexType == 'n' || db.database[tableName].indexType == 'h' || db.database[tableName].indexType == 'b'){ 
+          if((db.database[tableName].indexType == 'n' || db.database[tableName].indexType == 'h' || db.database[tableName].indexType == 'b') && flag == false){ 
             int test = db.database[tableName].colIndex[whereCol];
             for(int i = 0; i < N; ++i){
               cout << printNames.front() << ' ';
@@ -731,6 +773,10 @@ int main(int argc, char** argv) {
         sizeAfterDelete = db.database[tableName].rows.size();
         db.database[tableName].totalRows = int(sizeAfterDelete);
         cout << "Deleted " << sizeBeforeDelete - sizeAfterDelete << " rows from " << tableName << '\n';
+
+        if(db.database[tableName].indexType == 'b' || db.database[tableName].indexType == 'h'){
+          generate(tableName, db.database[tableName].nameGenerated, db.database[tableName].indexType);
+        }
         break;
       }
     
@@ -787,32 +833,12 @@ int main(int argc, char** argv) {
           cout << "Error during GENERATE: " << colName << " does not name a column in " << tableName << '\n';
           break;
         }
+        db.database[tableName].nameGenerated = colName;
+        generate(tableName, colName, indexType[0]);
 
-        int columnIndex = db.database[tableName].colIndex[colName];
-        size_t numKeys;
-        db.database[tableName].generateIndex = columnIndex;
-
-        db.database[tableName].h.clear();
-        db.database[tableName].b.clear();
-
-        if(indexType[0] == 'h'){
-          db.database[tableName].indexType = 'h';
-          for(int i = 0; i < db.database[tableName].totalRows; ++i){
-            db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(i);
-          }
-          numKeys = db.database[tableName].h.size();
-        }
-
-        if(indexType[0] == 'b'){
-          db.database[tableName].indexType = 'b';
-          for(int i = 0; i < db.database[tableName].totalRows; ++i){
-            db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(i);
-          }
-          numKeys = db.database[tableName].b.size();
-        }
         cout << "Generated " << indexType << " index for table " << tableName << " on column " << colName << " with "
-         << numKeys << " distinct keys\n";
-
+         << db.database[tableName].numKeys << " distinct keys\n";
+  
       break;
       }
       //generate done
