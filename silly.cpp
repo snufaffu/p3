@@ -8,6 +8,7 @@
 #include <queue>
 #include "Field.h"
 #include <algorithm>
+#include <map>
 
 using namespace std;
 
@@ -20,6 +21,10 @@ class Table {
   unordered_map<string, int> colIndex;
   vector<vector<Field>> rows;
   int totalRows = 0;
+  char indexType = 'n';
+  int generateIndex;
+  map<Field, vector<int>> b;
+  unordered_map<Field, vector<int>> h;
 };
 
 class Database {
@@ -28,58 +33,11 @@ class Database {
 };
 
 
-// class lessThan {
-//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
-//     for (auto& v : vec) {
-//       if(v < val){
-//         return true;
-//       }
-//     }
-//     return false;
-//   }
-// };
-
-
-// class equalTo {
-//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
-//     for (auto& v : vec) {
-//       if(v == val){
-//         return true;
-//       }
-//     }
-//     return false;
-//   }
-// };
-
-
-
-// class equalTo {
-//   Field m_val;
-// public:
-//   explicit equalTo(Field val) : m_val(val) {}
-  
-//   bool operator()(const vector<Field>& row) const {
-//       return any_of(row.begin(), row.end(),
-//           [this](const Field& f) { return f == m_val; });
-//   }
-// };
-
-
-// class greaterThan {
-//   bool operator()(const vector<vector<Field>> & vec, Field val) const {
-//     for (auto& v : vec) {
-//       if(v > val){
-//         return true;
-//       }
-//     }
-//     return false;
-//   }
-// };
-
-
 //global variables
+bool EXITNOW = false;
 Database db;
 bool quietOutput = false;
+
 //
 
 bool doesTableExist(string tableName){
@@ -96,22 +54,55 @@ bool doesColExist(string tableName, string columnName){
   return true;
 }
 
+class equalTo{
+  public:
+  Field compareData;
+  size_t colIndex;
+  equalTo(Field &comp, size_t colInd) : compareData(comp), colIndex(colInd) {}
 
-void deleteHelp(char op){
+  bool operator()(vector<Field> &row){
+    return(row[colIndex] == compareData);
+  }
+};
+
+class lessThan{
+  public:
+  Field compareData;
+  size_t colIndex;
+  lessThan(Field &comp, size_t colInd) : compareData(comp), colIndex(colInd) {}
+
+  bool operator()(vector<Field> &row){
+    return(row[colIndex] < compareData);
+  }
+};
+
+class greaterThan{
+  public:
+  Field compareData;
+  size_t colIndex;
+  greaterThan(Field &comp, size_t colInd) : compareData(comp), colIndex(colInd) {}
+
+  bool operator()(vector<Field> &row){
+    return(row[colIndex] > compareData);
+  }
+};
+
+
+void deleteHelp(char op, string tablename, string colname, Field compdata){
+  auto &rows = db.database[tablename].rows;
+  size_t checking = db.database[tablename].colIndex[colname];
   switch(op) {
     case '<' :
-      cout << "less\n";
+      rows.erase(remove_if(rows.begin(),rows.end(), lessThan(compdata, checking)),rows.end());
       break;
     
     case '=' :
-      cout << "equal\n";
+      rows.erase(remove_if(rows.begin(),rows.end(), equalTo(compdata, checking)),rows.end());
       break;
-
     case '>' :
-    cout << "more\n";
+      rows.erase(remove_if(rows.begin(),rows.end(), greaterThan(compdata, checking)),rows.end());
     break;
   }
-  cout << "helping!\n";
 }
 
 
@@ -160,6 +151,7 @@ int main(int argc, char** argv) {
 
   string command;
   do {
+    EXITNOW = false;
     if (cin.fail()) {
       cerr << "Reading from cin has failed! \n";
       exit(1);
@@ -253,11 +245,11 @@ int main(int argc, char** argv) {
         " from position " << db.database[tableName].totalRows << " to " 
         << numRows + db.database[tableName].totalRows - 1 << "\n";
 
-
+        
 
         db.database[tableName].totalRows = db.database[tableName].totalRows + numRows;
 
-        db.database[tableName].rows.reserve(numRows + db.database[tableName].totalRows);
+        db.database[tableName].rows.reserve(db.database[tableName].totalRows);
 
 
         // cout << db.database[tableName].cols;
@@ -273,7 +265,7 @@ int main(int argc, char** argv) {
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(junk == "true");
                 ++db.database[tableName].numData;
-                cerr << db.database[tableName].rows[i].back() << '\n';
+                // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
 
@@ -281,7 +273,7 @@ int main(int argc, char** argv) {
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(stod(junk));
                 ++db.database[tableName].numData;
-                cerr << db.database[tableName].rows[i].back() << '\n';
+                // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
 
@@ -289,7 +281,7 @@ int main(int argc, char** argv) {
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(junk);
                 ++db.database[tableName].numData;
-                cerr << db.database[tableName].rows[i].back() << '\n';
+                // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
 
@@ -297,7 +289,7 @@ int main(int argc, char** argv) {
                 cin >> junk;
                 db.database[tableName].rows[i].emplace_back(stoi(junk));
                 ++db.database[tableName].numData;
-                cerr << db.database[tableName].rows[i].back() << '\n';
+                // cerr << db.database[tableName].rows[i].back() << '\n';
               break;
               
             }
@@ -316,10 +308,13 @@ int main(int argc, char** argv) {
         int index;
         string junk;
         queue<string> printNames;
+        vector<string> printNamesVec;
         vector<int> indexList;
         string name;
 
+
         cin >> junk >> tableName >> N;
+        printNamesVec.reserve(N);
         if(doesTableExist(tableName) == false){
           cout << "Error during PRINT: " << tableName << " does not name a table in the database\n";
           getline(cin, command);
@@ -329,8 +324,15 @@ int main(int argc, char** argv) {
         for(int i = 0; i < N; ++i){
           cin >> junk;
           printNames.push(junk);
+          if(doesColExist(tableName, junk) == false){
+            EXITNOW = true;
+            cout << "Error during PRINT: " << junk << " does not name a column in " << tableName << '\n';
+            getline(cin, junk);
+            break;
+          }
         }
-
+        
+        if(EXITNOW) break;
         cin >> junk;
 
         if(junk[0] == 'W'){
@@ -346,6 +348,9 @@ int main(int argc, char** argv) {
             printNames.pop();
           }
           
+          if(EXITNOW){
+            break;
+          }
           cout << '\n';
             for(int i = 0; i < db.database[tableName].totalRows; ++i){
               for(int j = 0; j < N; ++j){
@@ -370,102 +375,146 @@ int main(int argc, char** argv) {
         char op;
         string val;
         int index;
+        size_t sizeBeforeDelete;
+        size_t sizeAfterDelete;
+
+        
 
       
         cin >> junk >> tableName >> junk >> inputname >> op;
-
+      
+        sizeBeforeDelete = db.database[tableName].rows.size();
 
         if(doesTableExist(tableName) == false){
           cout << "Error during INSERT: " << tableName << " does not name a table in the database\n";
           break;
         } // error checking
+
+        if(doesColExist(tableName, inputname) == false) {
+          cout << "Error during DELETE: " << inputname << " does not name a column in " << tableName << '\n';
+        }
         
         index = db.database[tableName].colIndex[inputname];
 
         switch(db.database[tableName].coltypes[index]){
           case ColumnType::String : {
             cin >> val;
-            cerr << "string\n";
+            Field deleteInput(val);
+            deleteHelp(op, tableName, inputname, deleteInput);
           break;
         }
 
 
           case ColumnType::Double : {
             cin >> val;
+            double input = stod(val);
+            Field deleteInput(input);
             cerr << "double\n";
+            deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
 
           case ColumnType::Int : {
             cin >> val;
+            int input = stoi(val);
+            Field deleteInput(input);
             cerr << "int\n";
+            deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
 
           case ColumnType::Bool : {
             cin >> val;
-            bool boolVal = (val == "true");
-            cerr << boolVal << '\n';
+            Field deleteInput(val == "true");
+            cerr << "bool\n";
+            deleteHelp(op, tableName, inputname, deleteInput);
           break;
           }
-
         }
-
-        switch(op) {
-          case '=' :
-
-          // auto& rows = db.database[tableName].rows;
-          // rows.erase(remove_if(rows.begin(), rows.end(), equalTo(rows.back(), val)), rows.end());  
-          // db.database[tableName].rows.erase(remove_if(db.database[tableName].rows.begin(), db.database[tableName].rows.end(),
-          //  equalTo(db.database[tableName].rows, val)));
-          break;
-        }
-
+        sizeAfterDelete = db.database[tableName].rows.size();
+        db.database[tableName].totalRows = int(sizeAfterDelete);
+        cout << "Deleted " << sizeBeforeDelete - sizeAfterDelete << " rows from " << tableName << '\n';
         break;
       }
-      //delete WTF
+    
+      //delete, error checking done
       
-      case 'J' : {
-        string junk;
-        string tablename1;
-        string tablename2;
-        string colname1;
-        string colname2;
-        int N;
-        int tableIndex;
-        vector<string> columnCheck;
-        vector<int> tableCheck;
-        char op;
+      // case 'J' : {
+      //   string junk;
+      //   string tablename1;
+      //   string tablename2;
+      //   string colname1;
+      //   string colname2;
+      //   int N;
+      //   int tableIndex;
+      //   vector<string> columnCheck;
+      //   vector<int> tableCheck;
+      //   char op;
 
 
-        cin >> tablename1 >> junk >> tablename2 >> junk >> colname1 >> op >> colname2
-        >> junk >> junk >> N;
+      //   cin >> tablename1 >> junk >> tablename2 >> junk >> colname1 >> op >> colname2
+      //   >> junk >> junk >> N;
 
-        for(int i = 0; i < N; ++i){
-          cin >> junk >> tableIndex;
-          columnCheck.push_back(junk);
-          tableCheck.push_back(tableIndex);
-        }
+      //   for(int i = 0; i < N; ++i){
+      //     cin >> junk >> tableIndex;
+      //     columnCheck.push_back(junk);
+      //     tableCheck.push_back(tableIndex);
+      //   }
         
-        auto& rows = db.database[tablename1].rows;
-        int index = db.database[tablename1].colIndex[colname1];
-        auto& rows2 = db.database[tablename2].rows;
-        int index2 = db.database[tablename2].colIndex[colname2];
-        for(size_t i = 0; i < min(rows.size(), rows2.size()); ++i){
-          if(rows[i][index] == rows2[i][index2]){
-            cout << "hit\n";
-          }
+      //   auto& rows = db.database[tablename1].rows;
+      //   int index = db.database[tablename1].colIndex[colname1];
+      //   auto& rows2 = db.database[tablename2].rows;
+      //   int index2 = db.database[tablename2].colIndex[colname2];
+      //   for(size_t i = 0; i < min(rows.size(), rows2.size()); ++i){
+      //     if(rows[i][index] == rows2[i][index2]){
+      //       cout << "hit\n";
+      //     }
+      //   } 
 
-        } 
 
-
-        break;
-      }
-      //join
+      //   break;
+      // }
+      // //join
       
-      case 'G' :
-        cout << "generating\n";
-        break;
+      case 'G' :{
+        string junk;
+        string indexType;
+        cin >> junk >> tableName >> indexType >> junk >> junk >> colName;
+        int columnIndex = db.database[tableName].colIndex[colName];
+        size_t numKeys;
+
+        if(doesTableExist(tableName) == false) {
+          cout << "Error during GENERATE: " << tableName << " does not name a table in the database\n";
+          break;
+        }
+
+        if (doesColExist(tableName, colName) == false) {
+          cout << "Error during GENERATE: " << colName << " does not name a column in " << tableName << '\n';
+        }
+
+        db.database[tableName].h.clear();
+        db.database[tableName].b.clear();
+
+        if(indexType[0] == 'h'){
+          db.database[tableName].indexType = 'h';
+          for(int i = 0; i < db.database[tableName].totalRows; ++i){
+            db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(columnIndex);
+          }
+          numKeys = db.database[tableName].h.size();
+        }
+
+        if(indexType[0] == 'b'){
+          db.database[tableName].indexType = 'b';
+          for(int i = 0; i < db.database[tableName].totalRows; ++i){
+            db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(columnIndex);
+          }
+          numKeys = db.database[tableName].b.size();
+        }
+        cout << "Generated " << indexType << " index for table " << tableName << " on column " << colName << " with "
+         << numKeys << " distinct keys\n";
+
+      break;
+      }
       //generate
 
       case 'Q' :
@@ -473,7 +522,9 @@ int main(int argc, char** argv) {
 
 
       default:
+      string junk;
       cout << "Error: unrecognized command\n";
+      getline(cin, junk);
     } //Error 4
 
   } while (command != "QUIT");
