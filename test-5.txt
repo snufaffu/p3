@@ -1,0 +1,36 @@
+#test
+CREATE printTable 3 int int int test1 test2 test3
+INSERT INTO printTable 1 ROWS
+1 2 3
+GENERATE FOR printTable hash INDEX on test3
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 1
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 = 2
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 < 2
+INSERT INTO printTable 3 ROWS
+3 2 1
+4 5 6
+6 5 4
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 0
+PRINT FROM printTable 3 test1 test2 test3 WHERE test1 < 4
+PRINT FROM printTable 3 test1 test2 test3 WHERE test2 = 5
+GENERATE FOR printTable bst INDEX on test2 
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 0
+PRINT FROM printTable 3 test1 test2 test3 WHERE test1 < 4
+PRINT FROM printTable 3 test1 test2 test3 WHERE test2 = 5
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 1
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 = 2
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 < 2
+DELETE FROM printTable WHERE test3 > 3
+PRINT FROM printTable 3 test1 test2 test3 WHERE test2 = 5
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 1
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 = 2
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 < 2
+GENERATE FOR printTable hash INDEX on test1
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 0
+PRINT FROM printTable 3 test1 test2 test3 WHERE test1 < 4
+PRINT FROM printTable 3 test1 test2 test3 WHERE test2 = 5
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 > 1
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 = 2
+PRINT FROM printTable 3 test1 test2 test3 WHERE test3 < 2
+QUIT
+

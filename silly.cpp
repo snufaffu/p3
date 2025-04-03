@@ -94,7 +94,7 @@ void generate(string tableName, string colname, char indextype){
 
         db.database[tableName].hasGen = true;
         int columnIndex = db.database[tableName].colIndex[colname];
-        size_t numkeys;
+        // size_t numkeys;
         db.database[tableName].generateIndex = columnIndex;
         string outType;
 
@@ -107,7 +107,7 @@ void generate(string tableName, string colname, char indextype){
           for(int i = 0; i < db.database[tableName].totalRows; ++i){
             db.database[tableName].h[db.database[tableName].rows[i][columnIndex]].push_back(i);
           }
-          numkeys = db.database[tableName].h.size();
+          db.database[tableName].numKeys = db.database[tableName].h.size();
         }
 
         if(indextype == 'b'){
@@ -116,9 +116,8 @@ void generate(string tableName, string colname, char indextype){
           for(int i = 0; i < db.database[tableName].totalRows; ++i){
             db.database[tableName].b[db.database[tableName].rows[i][columnIndex]].push_back(i);
           }
-          numkeys = db.database[tableName].b.size();
+          db.database[tableName].numKeys = db.database[tableName].b.size();
         }
-        db.database[tableName].numKeys = numkeys;
         
 }
 
@@ -259,7 +258,7 @@ void printWhere(char op, string tableName, Field compdata, size_t colIndex, size
         if(rows[i][colIndex] < compdata){
           ++numHits;
           for(size_t j = 0; j < N; ++j){
-            cout << rows[i][ind[j]];
+            cout << rows[i][ind[j]] << ' ';
           }
           cout << '\n';
         }
@@ -836,7 +835,7 @@ int main(int argc, char** argv) {
         db.database[tableName].nameGenerated = colName;
         generate(tableName, colName, indexType[0]);
 
-        cout << "Generated " << indexType << " index for table " << tableName << " on column " << colName << " with "
+        cout << "Generated " << indexType << " index for table " << tableName << " on column " << colName << ", with "
          << db.database[tableName].numKeys << " distinct keys\n";
   
       break;

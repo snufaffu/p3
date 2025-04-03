@@ -1,0 +1,24 @@
+#test4
+CREATE generateTable 3 string string int username guild level
+GENERATE FOR generateTable hash INDEX ON level
+INSERT INTO generateTable 4 ROWS
+snufaffu Straw 278
+Taulst Straw 281
+Maynaise Nightmares 274
+BoboMonkey1 Nightmares 279
+CREATE bstTable 3 string int bool name levels hasAccount
+INSERT INTO bstTable 5 ROWS
+Alex 278 true
+Daniel 281 true
+Matt 274 true
+Bob 279 true
+Caedon 0 false
+GENERATE FOR bstTable bst INDEX on levels 
+JOIN generateTable and bstTable WHERE level = levels AND PRINT 3 username 1 guild 1 hasAccount 2
+PRINT FROM generateTable 2 username level WHERE guild = Straw
+DELETE FROM generateTable WHERE level < 275
+PRINT FROM generateTable 2 username guild WHERE level < 275
+PRINT FROM generateTable 2 username level WHERE guild = Nightmares
+DELETE FROM generateTable WHERE level > 275
+PRINT FROM generateTable 2 username level ALL
+QUIT

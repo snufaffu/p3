@@ -1,0 +1,36 @@
+% % Error during INSERT: newtable does not name a table in the database
+% New table newtable with column(s) true created
+% Added 2 rows to newtable from position 0 to 1
+% Error: unrecognized command
+% Error during CREATE: Cannot create already existing table newtable
+% Error during REMOVE: people does not name a table in the database
+% Table newtable removed
+% Error during INSERT: newtable does not name a table in the database
+% Error during PRINT: newtable does not name a table in the database
+% New table people with column(s) name age created
+% Added 2 rows to people from position 0 to 1
+% Error during PRINT: true does not name a column in people
+% Error during PRINT: weight does not name a column in people
+% Error during PRINT: weight does not name a column in people
+% Error during PRINT: Weight does not name a column in people
+% name age 
+john 20 
+dan 22 
+Printed 2 matching rows from people
+% Deleted 1 rows from people
+% name age 
+dan 22 
+Printed 1 matching rows from people
+% name 
+Printed 0 matching rows from people
+% name 
+dan 
+Printed 1 matching rows from people
+% Added 1 rows to people from position 1 to 1
+% name 
+dan 
+dan 
+Printed 2 matching rows from people
+% Error during GENERATE: weight does not name a column in people
+% Generated hash index for table people on column age, with 1 distinct keys
+% Thanks for being silly!

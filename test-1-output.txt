@@ -1,0 +1,38 @@
+% % New table newtable with column(s) price created
+% Added 1 rows to newtable from position 0 to 0
+% % Added 2 rows to newtable from position 1 to 2
+% New table people with column(s) name happy created
+% Added 3 rows to people from position 0 to 2
+% % happy 
+true 
+true 
+false 
+Printed 3 matching rows from people
+% Error during CREATE: Cannot create already existing table people
+% happy 
+true 
+true 
+false 
+Printed 3 matching rows from people
+% false
+% happy 
+true 
+true 
+false 
+Printed 3 matching rows from people
+% New table removeTable with column(s) test1 test2 test3 created
+% test1 test2 test3 
+Printed 0 matching rows from removeTable
+% Added 2 rows to removeTable from position 0 to 1
+% test1 test2 test3 
+testing testing testing 
+testing testing testing 
+Printed 2 matching rows from removeTable
+% test1 test3 
+testing testing 
+testing testing 
+Printed 2 matching rows from removeTable
+% Table removeTable removed
+% Error during PRINT: removeTable does not name a table in the database
+% Error during INSERT: removeTable does not name a table in the database
+% Thanks for being silly!

@@ -1,0 +1,31 @@
+#test5
+CREATE hashT 2 int int test1 test2
+GENERATE FOR hashT hash INDEX on test3
+GENERATE FOR bstT hash INDEX on test2
+PRINT FROM hashT 2 test1 test2 WHERE test2 > 2
+PRINT FROM hashT 2 test1 test2 WHERE test1 < 0
+GENERATE FOR hashT hash INDEX on test1
+INSERT INTO hashT 2 rows
+1 2
+3 4
+PRINT FROM hashT 1 test2 WHERE test1 > 0
+INSERT INTO hashT 3 rows
+-1 5
+-2 10
+0 50
+PRINT FROM hashT 1 test2 WHERE test1 < 1
+PRINT FROM hashT 1 test1 WHERE test1 = 0
+REMOVE hashT
+PRINT FROM hashT 1 test1 ALL
+CREATE hashT 3 int int int test1 test2 test3
+GENERATE FOR hashT hash INDEX on test3
+INSERT INTO hashT 2 rows
+1 2 3
+4 5 6
+PRINT FROM hashT 3 test1 test2 test3 WHERE test3 < 3
+PRINT FROM hashT 3 test1 test2 test3 ALL
+DELETE FROM hashT WHERE test2 > 3
+PRINT FROM hashT 3 test1 test2 test3 ALL
+PRINT FROM hashT 2 test1 test3 ALL
+PRINT FROM hashT 1 test2 ALL
+QUIT

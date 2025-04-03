@@ -1,0 +1,27 @@
+#test
+CREATE printTable 3 int int int test1 test2 test3
+INSERT INTO printTable 1 ROWS
+1 2 3
+GENERATE FOR printTable hash INDEX on test3
+CREATE joinTable 3 int int int test4 test5 test6
+INSERT INTO joinTable 1 ROWS
+1 2 3
+INSERT INTO printTable 3 ROWS
+3 2 1
+4 5 6
+6 5 4
+GENERATE FOR printTable bst INDEX on test2 
+INSERT INTO joinTable 3 ROWS
+3 2 1
+4 5 6
+6 5 4
+GENERATE FOR joinTable hash INDEX on test5
+JOIN printTable and joinTable WHERE test1 = test4 AND PRINT 3 test1 1 test5 2 test 3 1
+GENERATE FOR joinTable hashINDEX on test6
+JOIN printTable and joinTable WHERE test1 = test4 AND PRINT 3 test1 1 test5 2 test 3 1
+GENERATE FOR printTable hash INDEX on test1
+JOIN printTable and joinTable WHERE test1 = test4 AND PRINT 3 test1 1 test5 2 test 3 1
+GENERATE FOR printTable hash INDEX on test3
+JOIN printTable and joinTable WHERE test1 = test4 AND PRINT 3 test1 1 test5 2 test 3 1
+QUIT
+

@@ -1,0 +1,26 @@
+#test6
+GENERATE FOR noExist bst INDEX ON test1
+CREATE Exist 3 bool bool bool test1 test2 test3
+INSERT INTO Exist 3 ROWS
+true true false
+false false true
+true true true
+PRINT FROM Exist 3 test1 test2 test3 WHERE test3 < true
+DELETE FROM Exist WHERE test1 > false
+PRINT FROM Exist 3 test1 test2 test3 ALL
+INSERT INTO Exist 2 ROWS
+true false false
+true true true
+CREATE joinTable 3 string int bool s1 n1 b1
+INSERT INTO joinTable 3 ROWS
+Hello 1 true
+Goodbye 3 true
+Sayonara 5 false
+PRINT FROM joinTable 3 s1 n1 b1 ALL
+DELETE FROM joinTable WHERE b1 < true
+PRINT FROM joinTable 3 s1 n1 b1 ALL
+GENERATE FOR joinTable hash INDEX on n1
+JOIN noExist AND joinTable WHERE test1 = b1 AND PRINT 3 test1 1 test2 1 b1 2
+JOIN joinTable AND noExist WHERE b1 = test1 AND PRINT 3 test1 1 test2 1 s1 2
+PRINT FROM joinTable 2 s1 d1 ALL
+QUIT

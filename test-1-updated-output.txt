@@ -1,0 +1,14 @@
+% % New table maple with column(s) username job order created
+% username job 
+Printed 0 matching rows from maple
+% Added 2 rows to maple from position 0 to 1
+% username job order 
+maynaise nw 1 
+taulst hy 2 
+Printed 2 matching rows from maple
+% New table school with column(s) name id created
+% Added 4 rows to school from position 0 to 3
+% Error during PRINT: job does not name a column in school
+% Error during CREATE: Cannot create already existing table school
+% Error: unrecognized command
+% Thanks for being silly!

@@ -1,17 +1,30 @@
-#test2
-CREATE maple 3 string string int username job order
-PRINT FROM maple 2 username job ALL
-INSERT INTO maple 2 ROWS
-maynaise nw 1
-taulst hy 2
-PRINT FROM maple 3 username job order ALL
-CREATE school 2 string int name id
-INSERT INTO school 3 ROWS
-hong 30
-alex 25
-kim 20
-daniel 15
-PRINT FROM school 1 job ALL
-CREATE school 1 bool happy
-HAPPY Check
+#test3
+INSERT INTO newtable 3 ROWS
+CREATE newtable 1 bool true
+INSERT INTO newtable 2 ROWS
+false false
+false false
+CREATE newtable 2 string bool name true
+REMOVE people
+REMOVE newtable
+INSERT INTO newtable 2 ROWS
+PRINT FROM newtable 2 name true ALL
+CREATE people 2 string int name age
+INSERT INTO people 2 ROWS
+john 20
+dan 22
+PRINT FROM people 2 true weight ALL
+PRINT FROM people 2 name weight ALL
+PRINT FROM people 2 weight name ALL
+PRINT FROM people 2 Weight name ALL
+PRINT FROM people 2 name age ALL
+DELETE FROM people WHERE age < 21
+PRINT FROM people 2 name age ALL
+PRINT FROM people 1 name WHERE age = 20
+PRINT FROM people 1 name WHERE age = 22
+INSERT INTO people 1 ROWS
+dan 22
+PRINT FROM people 1 name WHERE age = 22
+GENERATE FOR people hash INDEX on weight
+GENERATE FOR people hash INDEX on age
 QUIT
